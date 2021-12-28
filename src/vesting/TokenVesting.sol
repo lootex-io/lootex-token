@@ -1,7 +1,5 @@
 pragma solidity ^0.8.4;
 
-import "hardhat/console.sol";
-
 import "@openzeppelin/contracts/access/Ownable.sol"; 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol"; 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -21,7 +19,6 @@ contract TokenVesting is Ownable {
     event Registered(address account, uint256 amount);
     event Revoked(address account);
     event Claimed(address account, uint256 amount);
-    event Withdraw(address account, uint256 amount);
 
     address public vestingToken;
     uint256 public totalReleased;
@@ -55,7 +52,6 @@ contract TokenVesting is Ownable {
 
     constructor(address token) public {
         vestingToken = token;
-        console.log("vestingToken: ", token);
     }
 
     /* ========== External View FUNCTIONS ========== */
@@ -241,18 +237,6 @@ contract TokenVesting is Ownable {
         beneficiary.revoked = true;
         totalAllocated = totalAllocated.sub(refund);
         emit Revoked(_account);
-    }
-
-    /**
-     * @notice Emergency withdraw
-     */
-    function withdraw()
-        external
-        onlyOwner
-    {
-        uint256 balance = IERC20(vestingToken).balanceOf(address(this));
-        IERC20(vestingToken).safeTransfer(msg.sender, balance);
-        emit Withdraw(msg.sender, balance);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
